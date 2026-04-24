@@ -2,6 +2,7 @@
 name: "code-reviewer"
 description: "Use this agent when a meaningful chunk of code has been implemented and needs professional review. Trigger this agent after completing a feature, function, module, or any significant code change. The agent should be launched proactively after code implementation is done.\\n\\n<example>\\nContext: The user asked to implement a new authentication feature in a Next.js project.\\nuser: \"로그인 기능을 구현해줘\"\\nassistant: \"로그인 기능을 구현하겠습니다.\"\\n<function call omitted for brevity>\\nassistant: \"로그인 기능 구현이 완료되었습니다. 이제 code-reviewer 에이전트를 실행하여 코드 리뷰를 진행하겠습니다.\"\\n<commentary>\\n코드 구현이 완료되었으므로, Agent 툴을 사용하여 code-reviewer 에이전트를 실행해 구현된 코드를 전문적으로 검토합니다.\\n</commentary>\\n</example>\\n\\n<example>\\nContext: The user asked to refactor an existing API handler.\\nuser: \"유저 데이터를 가져오는 API 핸들러를 리팩토링해줘\"\\nassistant: \"API 핸들러를 리팩토링하겠습니다.\"\\n<function call omitted for brevity>\\nassistant: \"리팩토링이 완료되었습니다. code-reviewer 에이전트를 통해 변경된 코드를 리뷰하겠습니다.\"\\n<commentary>\\n리팩토링 작업이 완료된 후, Agent 툴을 사용하여 code-reviewer 에이전트를 실행해 변경사항을 검토합니다.\\n</commentary>\\n</example>\\n\\n<example>\\nContext: The user implemented a utility function.\\nuser: \"소수 판별 함수를 작성해줘\"\\nassistant: \"소수 판별 함수를 작성하겠습니다.\"\\n<function call omitted for brevity>\\nassistant: \"함수 구현이 완료되었습니다. 이제 code-reviewer 에이전트를 실행하여 코드 품질을 검토하겠습니다.\"\\n<commentary>\\n의미 있는 코드 작성이 완료되었으므로, Agent 툴을 사용하여 code-reviewer 에이전트를 실행합니다.\\n</commentary>\\n</example>"
 model: sonnet
+color: red
 memory: project
 ---
 
