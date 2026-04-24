@@ -2,7 +2,6 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { toast } from "sonner";
 import { useBoolean } from "ahooks";
 import { Input } from "@/components/ui/input";
@@ -10,14 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { submitContact } from "./actions";
-
-const schema = z.object({
-    name: z.string().min(2, "이름은 2자 이상이어야 합니다."),
-    email: z.string().email("올바른 이메일 주소를 입력하세요."),
-    message: z.string().min(10, "메시지는 10자 이상이어야 합니다."),
-});
-
-type FormData = z.infer<typeof schema>;
+import { contactSchema, type ContactFormData } from "./schema";
 
 export function ContactForm() {
     const [loading, { setTrue: startLoading, setFalse: stopLoading }] = useBoolean(false);
@@ -27,11 +19,11 @@ export function ContactForm() {
         handleSubmit,
         reset,
         formState: { errors },
-    } = useForm<FormData>({
-        resolver: zodResolver(schema),
+    } = useForm<ContactFormData>({
+        resolver: zodResolver(contactSchema),
     });
 
-    async function onSubmit(data: FormData) {
+    async function onSubmit(data: ContactFormData) {
         startLoading();
         try {
             const result = await submitContact(data);

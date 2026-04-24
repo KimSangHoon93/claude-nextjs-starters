@@ -1,14 +1,8 @@
 "use server";
 
-import { z } from "zod";
+import { contactSchema, type ContactFormData } from "./schema";
 
-const contactSchema = z.object({
-    name: z.string().min(2, "이름은 2자 이상이어야 합니다."),
-    email: z.string().email("올바른 이메일 주소를 입력하세요."),
-    message: z.string().min(10, "메시지는 10자 이상이어야 합니다."),
-});
-
-export type ContactFormData = z.infer<typeof contactSchema>;
+export type { ContactFormData };
 
 export type ContactActionResult =
     | { success: true }
