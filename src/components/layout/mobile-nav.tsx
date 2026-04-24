@@ -14,10 +14,10 @@ import {
 import { siteConfig } from "@/config/site";
 
 export function MobileNav() {
-    const [open, { toggle, setFalse }] = useBoolean(false);
+    const [open, { setTrue, setFalse }] = useBoolean(false);
 
     return (
-        <Sheet open={open} onOpenChange={toggle}>
+        <Sheet open={open} onOpenChange={(isOpen) => (isOpen ? setTrue() : setFalse())}>
             {/* SheetTrigger는 render prop으로 Button과 합성 */}
             <SheetTrigger
                 render={
@@ -26,6 +26,7 @@ export function MobileNav() {
                         size="icon"
                         className="md:hidden"
                         aria-label="메뉴 열기"
+                        onClick={setTrue}
                     />
                 }
             >
