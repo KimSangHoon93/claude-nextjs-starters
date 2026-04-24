@@ -19,7 +19,9 @@ export default function Error({
             <p className="text-5xl font-bold text-destructive">오류</p>
             <h1 className="mt-4 text-2xl font-bold text-foreground">문제가 발생했습니다</h1>
             <p className="mt-2 text-muted-foreground">
-                {error.message || "예상치 못한 오류가 발생했습니다."}
+                {process.env.NODE_ENV === "development"
+                    ? error.message
+                    : "예상치 못한 오류가 발생했습니다."}
             </p>
             <Button className="mt-8" onClick={reset}>
                 다시 시도
