@@ -48,7 +48,7 @@ def main():
     clean = re.sub(r'[#*`>_\[\]()]', '', raw).strip()
     summary = next((l.strip() for l in clean.splitlines() if l.strip()), '작업 완료')[:100]
 
-    text = f":white_check_mark: *{project_name} 작업이 완료.* {summary}"
+    text = f":white_check_mark: *{project_name} 작업 완료* => {summary}"
 
     payload = json.dumps({"text": text}).encode('utf-8')
     req = urllib.request.Request(

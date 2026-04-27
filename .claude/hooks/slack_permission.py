@@ -43,7 +43,7 @@ def main():
     message = data.get('message', '')
     detail = f"`{tool_name}` 도구" if tool_name else message.splitlines()[0][:100] if message else '알 수 없음'
 
-    text = f":warning: *{project_name} 권한 요청* — {detail}"
+    text = f":warning: *{project_name} 권한 요청* => {detail}"
 
     payload = json.dumps({"text": text}).encode('utf-8')
     req = urllib.request.Request(
