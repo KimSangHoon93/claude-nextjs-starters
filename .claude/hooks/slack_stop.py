@@ -5,6 +5,7 @@ import json
 import os
 import urllib.request
 from pathlib import Path
+from datetime import datetime
 
 
 def load_env_file():
@@ -40,17 +41,32 @@ def main():
     if not webhook_url:
         sys.exit(0)
 
-    project_name = Path(__file__).parent.parent.parent.name.upper()
+    project_name = Path(__file__).parent.parent.parent.name
 
-    # 마크다운 기호 제거 후 첫 문장 추출
-    import re
-    raw = data.get('last_assistant_message', '')
-    clean = re.sub(r'[#*`>_\[\]()]', '', raw).strip()
-    summary = next((l.strip() for l in clean.splitlines() if l.strip()), '작업 완료')[:100]
+    reason = data.get('hook_event_name', '')
+    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-    text = f":white_check_mark: *{project_name} 작업 완료* => {summary}"
+    print(f"DEBUG: REASON = '{reason}'", file=sys.stderr)
+    print(f"DEBUG: PROJECT_NAME = '{project_name}'", file=sys.stderr)
+    print(f"DEBUG: TIMESTAMP = '{timestamp}'", file=sys.stderr)
 
-    payload = json.dumps({"text": text}).encode('utf-8')
+    text = (
+        f"✅ 작업 완료 알림\n\n"
+        f"프로젝트: {project_name}\n"
+        f"상태: {reason}\n"
+        f"시간: {timestamp}\n\n"
+        f"Claude Code 작업이 완료되었습니다."
+    )
+
+    payload = json.dumps({
+        "channel": "#claude-code",
+        "username": "Claude Code",
+        "text": text,
+        "icon_emoji": ":white_check_mark:"
+    }).encode('utf-8')
+
+    print(f"DEBUG: PAYLOAD = '{payload.decode()}'", file=sys.stderr)
+
     req = urllib.request.Request(
         webhook_url,
         data=payload,

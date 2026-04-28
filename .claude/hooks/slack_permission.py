@@ -5,6 +5,7 @@ import json
 import os
 import urllib.request
 from pathlib import Path
+from datetime import datetime
 
 
 def load_env_file():
@@ -36,16 +37,32 @@ def main():
     if not webhook_url:
         sys.exit(0)
 
-    project_name = Path(__file__).parent.parent.parent.name.upper()
+    project_name = Path(__file__).parent.parent.parent.name
 
-    # tool_name 우선, 없으면 message에서 첫 줄 사용
-    tool_name = data.get('tool_name', '')
     message = data.get('message', '')
-    detail = f"`{tool_name}` 도구" if tool_name else message.splitlines()[0][:100] if message else '알 수 없음'
+    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-    text = f":warning: *{project_name} 권한 요청* => {detail}"
+    print(f"DEBUG: MESSAGE = '{message}'", file=sys.stderr)
+    print(f"DEBUG: PROJECT_NAME = '{project_name}'", file=sys.stderr)
+    print(f"DEBUG: TIMESTAMP = '{timestamp}'", file=sys.stderr)
 
-    payload = json.dumps({"text": text}).encode('utf-8')
+    text = (
+        f"🔔 권한 요청 알림\n\n"
+        f"프로젝트: {project_name}\n"
+        f"상태: {message}\n"
+        f"시간: {timestamp}\n\n"
+        f"Claude Code에서 알림이 도착했습니다."
+    )
+
+    payload = json.dumps({
+        "channel": "#claude-code",
+        "username": "Claude Code",
+        "text": text,
+        "icon_emoji": ":bell:"
+    }).encode('utf-8')
+
+    print(f"DEBUG: PAYLOAD = '{payload.decode()}'", file=sys.stderr)
+
     req = urllib.request.Request(
         webhook_url,
         data=payload,
