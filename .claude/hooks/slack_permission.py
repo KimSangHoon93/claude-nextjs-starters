@@ -70,8 +70,8 @@ def main():
     )
     try:
         urllib.request.urlopen(req, timeout=5)
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"ERROR: Slack 전송 실패 - {e}", file=sys.stderr)
 
 
 if __name__ == '__main__':

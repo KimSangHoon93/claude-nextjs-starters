@@ -16,7 +16,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python .claude/hooks/slack_permission.py"
+            "command": "py .claude/hooks/slack_permission.py"
           }
         ]
       }
@@ -26,7 +26,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python .claude/hooks/slack_stop.py"
+            "command": "py .claude/hooks/slack_stop.py"
           }
         ]
       }
