@@ -89,7 +89,12 @@ npm run lint   # ESLint — 커밋 전 반드시 실행
 | 에이전트 | 트리거 시점 |
 |---------|------------|
 | `code-reviewer` | 기능/함수 구현 완료 후 자동 실행 |
-| `code-refactoring-specialist` | 복잡한 코드, 중복 코드 감지 시 |
+| `development-planner` | ROADMAP.md 생성·수정 요청 시 |
+| `nextjs-app-developer` | Next.js 앱 구조·라우팅·레이아웃 설계 시 |
+| `prd-generator` | 새 프로젝트 PRD 생성 요청 시 |
+| `prd-validator` | PRD 기술적 검증 요청 시 |
+| `starter-cleaner` | 스타터 킷 초기화 요청 시 |
+| `ui-markup-specialist` | UI 컴포넌트 마크업·스타일링 작업 시 |
 
 ## 훅 (Slack 알림)
 
