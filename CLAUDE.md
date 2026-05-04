@@ -1,5 +1,10 @@
 @AGENTS.md
 
+# Project Context
+
+- PRD 문서: @docs/PRD.md
+- 개발 로드맵: @docs/ROADMAP.md
+
 # 프로젝트 개요
 
 Next.js 스타터 템플릿 — 현대적 풀스택 웹 앱 구조 학습·참고용.
