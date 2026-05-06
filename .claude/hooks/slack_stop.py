@@ -3,6 +3,8 @@
 import sys
 import json
 import os
+import re
+import subprocess
 import urllib.request
 from pathlib import Path
 from datetime import datetime
@@ -25,6 +27,104 @@ def load_env_file():
             break
 
 
+def _clean_markdown(text):
+    text = re.sub(r'```[\s\S]*?```', '', text)
+    text = re.sub(r'`[^`]*`', '', text)
+    text = re.sub(r'^#+\s*', '', text, flags=re.MULTILINE)
+    text = re.sub(r'\*\*([^*]+)\*\*', r'\1', text)
+    text = re.sub(r'__([^_]+)__', r'\1', text)
+    text = re.sub(r'\*([^*]+)\*', r'\1', text)
+    text = re.sub(r'_([^_]+)_', r'\1', text)
+    text = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', text)
+    text = re.sub(r'^\s*[-*+]\s+', '', text, flags=re.MULTILINE)
+    text = re.sub(r'^\s*\d+\.\s+', '', text, flags=re.MULTILINE)
+    text = re.sub(r'^---+$', '', text, flags=re.MULTILINE)
+    text = re.sub(r'\s+', ' ', text)
+    return text.strip()
+
+
+def _extract_first_sentence(text):
+    if not text:
+        return None
+    match = re.search(r'[.!?。？！]', text)
+    if match and match.end() <= 120:
+        sentence = text[:match.end()].strip()
+    else:
+        sentence = text[:100].strip()
+        if len(text) > 100:
+            sentence += '...'
+    return sentence if sentence else None
+
+
+def _summary_from_transcript(transcript_path):
+    if not transcript_path:
+        return None
+    try:
+        path = Path(transcript_path)
+        if not path.exists():
+            return None
+        lines = path.read_text(encoding='utf-8').splitlines()
+        for line in reversed(lines):
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                obj = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if obj.get('isSidechain') is True:
+                continue
+            if obj.get('type') != 'assistant':
+                continue
+            msg = obj.get('message', {})
+            if msg.get('stop_reason') != 'end_turn':
+                continue
+            content = msg.get('content', [])
+            if not isinstance(content, list):
+                continue
+            texts = [
+                item['text']
+                for item in content
+                if isinstance(item, dict) and item.get('type') == 'text'
+            ]
+            if not texts:
+                continue
+            full_text = '\n'.join(texts)
+            summary = _extract_first_sentence(_clean_markdown(full_text))
+            if summary:
+                return summary
+        return None
+    except Exception:
+        return None
+
+
+def _summary_from_git(project_root):
+    try:
+        result = subprocess.run(
+            ['git', 'log', '-1', '--pretty=%s'],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            encoding='utf-8',
+            timeout=3
+        )
+        if result.returncode == 0:
+            subject = result.stdout.strip()
+            if subject:
+                return subject
+        return None
+    except Exception:
+        return None
+
+
+def get_completion_summary(data, project_root):
+    return (
+        _summary_from_transcript(data.get('transcript_path'))
+        or _summary_from_git(project_root)
+        or 'Claude Code 작업이 완료되었습니다.'
+    )
+
+
 def main():
     load_env_file()
 
@@ -41,21 +141,21 @@ def main():
     if not webhook_url:
         sys.exit(0)
 
-    project_name = Path(__file__).parent.parent.parent.name
-
-    reason = data.get('hook_event_name', '')
+    project_root = Path(__file__).parent.parent.parent
+    project_name = project_root.name
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-    print(f"DEBUG: REASON = '{reason}'", file=sys.stderr)
+    summary = get_completion_summary(data, project_root)
+
     print(f"DEBUG: PROJECT_NAME = '{project_name}'", file=sys.stderr)
     print(f"DEBUG: TIMESTAMP = '{timestamp}'", file=sys.stderr)
+    print(f"DEBUG: SUMMARY = '{summary}'", file=sys.stderr)
 
     text = (
         f"✅ 작업 완료 알림\n\n"
         f"프로젝트: {project_name}\n"
-        f"상태: {reason}\n"
         f"시간: {timestamp}\n\n"
-        f"Claude Code 작업이 완료되었습니다."
+        f"{summary}"
     )
 
     payload = json.dumps({
