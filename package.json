@@ -11,6 +11,7 @@
   "dependencies": {
     "@base-ui/react": "^1.4.1",
     "@hookform/resolvers": "^5.2.2",
+    "@notionhq/client": "^5.20.0",
     "ahooks": "^3.9.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
